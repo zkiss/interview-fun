@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ThreeDimensionalBoxPacking {
-    public class Box {
+    public static class Box {
         public final int x, y, z;
 
         public Box(int x, int y, int z) {
@@ -19,44 +19,39 @@ public class ThreeDimensionalBoxPacking {
             this.y = y;
             this.z = z;
         }
-
-        public int getX() {
-            return x;
-        }
-
-        public int getY() {
-            return y;
-        }
-
-        public int getZ() {
-            return z;
-        }
     }
 
-    public int pack(List<Box> boxes) {
+    public static int pack(List<Box> boxes) {
         List<Box> sortedByX =
-                boxes.stream().sorted(Comparator.comparing(Box::getX)).collect(Collectors.toList());
-        List<Box> sortedByY =
-                boxes.stream().sorted(Comparator.comparing(Box::getY)).collect(Collectors.toList());
+                boxes.stream().sorted(Comparator.comparing(b -> b.x)).collect(Collectors.toList());
 
-        int[] resultVector = new int[boxes.size()];
+        final int n = boxes.size();
+        int[] resultVectorPrev = sortedByX.stream().mapToInt(b -> b.z).toArray();
+        int[] resultVectorCurr = new int[n];
+        // Use for swaps;
+        int[] temp;
 
-        int i = 0;
-        int height = 0;
-        Deque<Box> tower = new LinkedList<>();
-        Box box = sortedByX.get(i);
-        height += box.getZ();
-        //tower.push(i);
-        int j = sortedByY.indexOf(box);
-        if (resultVector[i] > 0) {
-            int result = resultVector[i] + height;
-            resultVector[i] = result;
-        } else {
-            for (int k = i + 1; k < sortedByX.size() - 1; k++) {
-
+        int maxHeight = Arrays.stream(resultVectorPrev).max().getAsInt();
+        boolean changed = true;
+        // The last element's calculated value is final after each iteration. Reduce iteration length.
+        for (int i = n; changed; i--){
+            changed = false;
+            for (int j = 0; j < i; j++) {
+                resultVectorCurr[j] = resultVectorPrev[j];
+                Box candidate = sortedByX.get(j);
+                for (int k = j + 1; k < n; k++) {
+                    if (sortedByX.get(k).y > candidate.y && sortedByX.get(k).x > candidate.x && resultVectorPrev[k] + candidate.z > resultVectorPrev[j]) {
+                        resultVectorCurr[j] = resultVectorPrev[k] + candidate.z;
+                        changed = true;
+                        if (maxHeight < resultVectorCurr[j]) maxHeight = resultVectorCurr[j];
+                    }
+                }
             }
+            temp = resultVectorPrev;
+            resultVectorPrev = resultVectorCurr;
+            resultVectorCurr = temp;
         }
 
-        return Arrays.stream(resultVector).max().getAsInt();
+        return maxHeight;
     }
 }
