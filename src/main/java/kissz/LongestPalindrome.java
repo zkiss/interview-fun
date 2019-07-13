@@ -1,5 +1,8 @@
 package kissz;
 
+/**
+ * https://leetcode.com/explore/interview/card/top-interview-questions-medium/103/array-and-strings/780/
+ */
 public class LongestPalindrome {
     public String longestPalindrome(String s) {
         String longestPalindrome = "";
