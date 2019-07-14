@@ -30,6 +30,7 @@ public class DivisorGame {
     }
 
     public boolean divisorGame(int n) {
+        // ends up being equal to n % 2 == 0
         long[] canWin = new long[n / 64 + 1];
         long[] hasAnswers = new long[n / 64 + 1];
         return canWin(canWin, hasAnswers, n);
