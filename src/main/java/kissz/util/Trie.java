@@ -1,4 +1,4 @@
-package kissz;
+package kissz.util;
 
 import java.util.*;
 
