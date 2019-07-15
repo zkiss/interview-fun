@@ -33,6 +33,7 @@ public class Trie {
     }
 
     public void add(String s, Collection<String> tags) {
+        if (s.isEmpty()) return;
         // find first missing node.
         Node node = null;
         for (Iterator<Node> iterator = iterator(s); iterator.hasNext();) {
