@@ -1,61 +1,67 @@
 package kissz;
 
+/**
+ * https://leetcode.com/problems/roman-to-integer
+ */
 public class RomanToInteger {
     public int romanToInt(String s) {
         int value = 0;
-        while (!s.isEmpty() && s.charAt(0) == 'M') {
+        int i = 0;
+        int n = s.length();
+        while (i < n && s.charAt(i) == 'M') {
             value += 1000;
-            s = s.substring(1);
+            ++i;
         }
-        if (s.length() > 1 && s.startsWith("CM")) {
+        if (n - i > 1 && s.charAt(i) == 'C' && s.charAt(i + 1) == 'M') {
             value += 900;
-            s = s.substring(2);
+            i += 2;
         }
-        if (!s.isEmpty() && s.charAt(0) == 'D') {
+        if (i < n && s.charAt(i) == 'D') {
             value += 500;
-            s = s.substring(1);
+            ++i;
         }
-        if (s.length() > 1 && s.startsWith("CD")) {
+        if (n - i > 1 && s.charAt(i) == 'C' && s.charAt(i + 1) == 'D') {
             value += 400;
-            s = s.substring(2);
+            i += 2;
         }
 
-        while (!s.isEmpty() && s.charAt(0) == 'C') {
+        while (i < n && s.charAt(i) == 'C') {
             value += 100;
-            s = s.substring(1);
+            ++i;
         }
-        if (s.length() > 1 && s.startsWith("XC")) {
+        if (n - i > 1 && s.charAt(i) == 'X' && s.charAt(i + 1) == 'C') {
             value += 90;
-            s = s.substring(2);
+            i += 2;
         }
-        if (!s.isEmpty() && s.charAt(0) == 'L') {
+        if (i < n && s.charAt(i) == 'L') {
             value += 50;
-            s = s.substring(1);
+            ++i;
         }
-        if (s.length() > 1 && s.startsWith("XL")) {
+        if (n - i > 1 && s.charAt(i) == 'X' && s.charAt(i + 1) == 'L') {
             value += 40;
-            s = s.substring(2);
+            i += 2;
         }
 
-        while (!s.isEmpty() && s.charAt(0) == 'X') {
+        while (i < n && s.charAt(i) == 'X') {
             value += 10;
-            s = s.substring(1);
+            ++i;
         }
-        if (s.length() > 1 && s.startsWith("IX")) {
+        if (n - i > 1 && s.charAt(i) == 'I' && s.charAt(i + 1) == 'X') {
             value += 9;
-            s = s.substring(2);
+            i += 2;
         }
-        if (!s.isEmpty() && s.charAt(0) == 'V') {
+        if (i < n && s.charAt(i) == 'V') {
             value += 5;
-            s = s.substring(1);
+            ++i;
         }
-        if (s.length() > 1 && s.startsWith("IV")) {
+        if (n - i > 1 && s.charAt(i) == 'I' && s.charAt(i + 1) == 'V') {
             value += 4;
-            s = s.substring(2);
+            i += 2;
         }
-        while (!s.isEmpty() && s.charAt(0) == 'I') {
+
+        while (i < n && s.charAt(i) == 'I') {
             value += 1;
-            s = s.substring(1);
+            ++i;
         }
 
         return value;
