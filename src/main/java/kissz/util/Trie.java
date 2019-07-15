@@ -1,5 +1,7 @@
 package kissz.util;
 
+import kissz.ShortestPalindrome;
+
 import java.util.*;
 
 /**
@@ -14,6 +16,18 @@ public class Trie {
 
     public Trie(String s) { add(s);}
 
+    /** Adds all suffix substrings s to a tree. */
+    public void suffixTree(String s) {
+        suffixTree(s, Collections.EMPTY_LIST);
+    }
+
+    /** Adds all suffix substrings s to a tree. */
+    public void suffixTree(String s, Collection<String> tags) {
+        for (int i = 0; i < s.length(); i++) {
+            add(s.substring(i), tags);
+        }
+    }
+
     public void add(String s) {
         add(s, Collections.EMPTY_LIST);
     }
@@ -25,6 +39,9 @@ public class Trie {
             Node next = iterator.next();
             if (next == null) break;
             node = next;
+            for (String tag: tags) {
+                node.tag(tag);
+            }
         }
 
         // insert root node if missing.
@@ -45,6 +62,51 @@ public class Trie {
             if (node == null) return false;
         }
         return true;
+    }
+
+    /**
+     * Returns the string of maximum depth that has all the tags.
+     */
+    public String maxDepthString(Collection<String> tags) {
+        // Calculate max depth
+        int maxDepth = 0;
+        String maxDepthString = "";
+        for (Trie.Node root : getRoots().values()) {
+            if (root.getTags().containsAll(tags)) {
+
+                Deque<StackElem> dfsStack = new LinkedList<>();
+                dfsStack.push(new StackElem(1, root));
+
+                while (!dfsStack.isEmpty()) {
+                    StackElem elem = dfsStack.pop();
+                    for (Trie.Node child : elem.trieNode.getChildren()) {
+                        if (child.getTags().containsAll(tags)) {
+                            int depth = elem.depth + 1;
+                            if (depth > maxDepth) {
+                                maxDepth = depth;
+                                maxDepthString = child.getValue();
+                            }
+                            dfsStack.push(new StackElem(depth, child));
+                        }
+                    }
+                }
+            }
+        }
+        return maxDepthString;
+    }
+
+    private static class StackElem {
+        final int depth;
+        final Trie.Node trieNode;
+
+        public StackElem(int depth, Trie.Node trieNode) {
+            this.depth = depth;
+            this.trieNode = trieNode;
+        }
+    }
+
+    public Map<Character, Node> getRoots() {
+        return Collections.unmodifiableMap(roots);
     }
 
     /**

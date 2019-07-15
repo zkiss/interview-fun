@@ -1,4 +1,4 @@
-package kissz;
+package kissz.util;
 
 import org.junit.Test;
 
@@ -11,6 +11,19 @@ import java.util.stream.Collectors;
 import static org.junit.Assert.*;
 
 public class TrieTest {
+
+    @Test
+    public void testSuffixTree() {
+        Trie trie = new Trie();
+        trie.suffixTree("banana");
+
+        assertTrue(trie.contains("banana"));
+        assertTrue(trie.contains("anana"));
+        assertTrue(trie.contains("nana"));
+        assertTrue(trie.contains("ana"));
+        assertTrue(trie.contains("na"));
+        assertTrue(trie.contains("a"));
+    }
 
     @Test
     public void testIterator() {
