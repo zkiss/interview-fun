@@ -5,19 +5,20 @@ package kissz;
  */
 public class ContainerWithMostWater {
     public int maxArea(int[] height) {
-        int maxA = Math.min(height[0], height[1]);
-        for (int i = 2; i < height.length; i++) {
-            if (height[i] == 0) continue;
-            int minWidth = maxA / height[i] + 1;
-            for (int preceding = 0; preceding <= i - minWidth; preceding++) {
-                int h = Math.min(height[i], height[preceding]);
-                int w = i - preceding;
-                int areaWithPreceding = w * h;
-                if (areaWithPreceding > maxA) {
-                    maxA = areaWithPreceding;
-                }
+        int left = 0;
+        int right = height.length - 1;
+        int max = 0;
+        while (left < right) {
+            max = Math.max(
+                    max,
+                    Math.min(height[left], height[right]) * (right - left)
+            );
+            if (height[left] < height[right]) {
+                left++;
+            } else {
+                right--;
             }
         }
-        return maxA;
+        return max;
     }
 }
