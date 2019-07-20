@@ -6,7 +6,7 @@ public class RegularExpressionMatching {
         return match(matches, s, 0, p, 0);
     }
 
-    private boolean match(Boolean[][] matches, String s, int si, String p, int pi) {
+    private Boolean match(Boolean[][] matches, String s, int si, String p, int pi) {
         if (matches[si][pi] != null) return matches[si][pi];
 
         if (pi + 1 < p.length() && p.charAt(pi + 1) == '*') {
