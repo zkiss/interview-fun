@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 // https://leetcode.com/problems/largest-number/
 class LargestNumber {
 
-    private static final Comparator<String> CMP = new Comparator<>() {
+    private static final Comparator<String> CMP = new Comparator<String>() {
         @Override
         public int compare(String a, String b) {
             // reverse comparator, high values first

@@ -62,7 +62,7 @@ public class DivisorGame {
     private static int END = -1;
 
     static Iterator<Integer> divisorsDecreasing(int n) {
-        return new Iterator<>() {
+        return new Iterator<Integer>() {
             private int next = findNext(n / 2);
 
             private int findNext(int start) {

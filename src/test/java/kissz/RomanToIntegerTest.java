@@ -10,6 +10,7 @@ public class RomanToIntegerTest {
     @Test
     public void testRomanToValue() {
         assertEquals(1998, new RomanToInteger().romanToInt("MCMXCVIII"));
+        assertEquals(4, new RomanToInteger().romanToInt("IV"));
     }
 
     private RomanToInteger r = new RomanToInteger();

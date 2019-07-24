@@ -7,6 +7,11 @@ import static org.junit.Assert.*;
 public class ShortestPalindromeTest {
 
     @Test
+    public void empty() {
+        assertEquals("", new ShortestPalindrome().shortestPalindrome(""));
+    }
+
+    @Test
     public void shortestPalindrome_example1() {
         assertEquals("aaacecaaa", new ShortestPalindrome().shortestPalindrome("aacecaaa"));
     }
@@ -26,5 +31,10 @@ public class ShortestPalindromeTest {
     public void shortestPalindrome_satan() {
         assertEquals("asatanseesnatasa",
                 new ShortestPalindrome().shortestPalindrome("eesnatasa"));
+    }
+
+    @Test
+    public void shortestPalindrom_abab() {
+        assertEquals("ababbabbbababbbabbaba", new ShortestPalindrome().shortestPalindrome("ababbbabbaba"));
     }
 }

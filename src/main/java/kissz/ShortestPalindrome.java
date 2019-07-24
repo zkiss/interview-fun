@@ -9,6 +9,7 @@ import java.util.*;
  */
 public class ShortestPalindrome {
     public String shortestPalindrome(String s) {
+        if (s.isEmpty()) return "";
         Trie trie = new Trie();
         trie.add(s, Arrays.asList("A"));
         String reverseS = new StringBuilder(s).reverse().toString();
