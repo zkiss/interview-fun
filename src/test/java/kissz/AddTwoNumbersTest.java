@@ -1,5 +1,6 @@
 package kissz;
 
+import kissz.AddTwoNumbers.ListNode;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
