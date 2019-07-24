@@ -4,6 +4,9 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ * https://leetcode.com/problems/valid-anagram
+ */
 public class Anagram {
 
     public boolean isAnagram(String s, String t) {
