@@ -4,6 +4,9 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * https://leetcode.com/problems/generate-parentheses/
+ */
 public class GenerateParentheses {
     public List<String> generateParenthesis(int n) {
         List[] solutions = new List[n + 1];
