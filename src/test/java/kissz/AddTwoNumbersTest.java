@@ -7,7 +7,7 @@ import static org.junit.Assert.*;
 public class AddTwoNumbersTest {
     @Test
     public void example() {
-        var r = new AddTwoNumbers().addTwoNumbers(
+        ListNode r = new AddTwoNumbers().addTwoNumbers(
                 ListNode.fromInt(342),
                 ListNode.fromInt(465)
         );

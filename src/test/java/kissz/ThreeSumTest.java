@@ -5,6 +5,7 @@ import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -14,7 +15,7 @@ public class ThreeSumTest {
 
     @Test
     public void example() {
-        var r = ts.threeSum(new int[]{-1, 0, 1, 2, -1, -4});
+        List<List<Integer>> r = ts.threeSum(new int[]{-1, 0, 1, 2, -1, -4});
         assertEquals(2, r.size());
         Assert.assertTrue(r.stream().anyMatch(l -> l.size() == 3 && l.containsAll(Arrays.asList(-1, 0, 1))));
         Assert.assertTrue(r.stream().anyMatch(l -> l.size() == 3 && new HashSet<>(l).equals(new HashSet<>(Arrays.asList(-1, -1, 2)))));

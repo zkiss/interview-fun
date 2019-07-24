@@ -50,25 +50,9 @@ public class LetterCombinationsOfAPhoneNumber {
     }
 
     private char letter(char digit, int letterId) {
-        switch (digit) {
-            case '2':
-                return (char) ('a' + letterId);
-            case '3':
-                return (char) ('d' + letterId);
-            case '4':
-                return (char) ('g' + letterId);
-            case '5':
-                return (char) ('j' + letterId);
-            case '6':
-                return (char) ('m' + letterId);
-            case '7':
-                return (char) ('p' + letterId);
-            case '8':
-                return (char) ('t' + letterId);
-            case '9':
-                return (char) ('w' + letterId);
-            default:
-                throw new IllegalArgumentException();
-        }
+        if (digit < '2' || digit > '9')
+            throw new IllegalArgumentException();
+
+        return (char) ((digit - '2') * 3 + 'a' + letterId);
     }
 }
