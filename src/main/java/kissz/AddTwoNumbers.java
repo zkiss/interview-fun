@@ -1,41 +1,42 @@
 package kissz;
 
-class ListNode {
-    static ListNode fromInt(int n) {
-        if (n == 0) return new ListNode(0);
-
-        final ListNode lastDigit = new ListNode(n % 10);
-        ListNode c = lastDigit;
-        do {
-            n /= 10;
-            c.next = new ListNode(n % 10);
-            c = c.next;
-        } while (n > 0);
-        return lastDigit;
-    }
-
-    int val;
-    ListNode next;
-
-    ListNode(int x) { val = x; }
-
-    public int toInt() {
-        int m = 1;
-        ListNode c = this;
-        int ret = 0;
-        while (c != null) {
-            ret += c.val * m;
-            m *= 10;
-            c = c.next;
-        }
-        return ret;
-    }
-}
 
 /**
  * https://leetcode.com/problems/add-two-numbers
  */
 public class AddTwoNumbers {
+    static class ListNode {
+        static ListNode fromInt(int n) {
+            if (n == 0) return new ListNode(0);
+
+            final ListNode lastDigit = new ListNode(n % 10);
+            ListNode c = lastDigit;
+            do {
+                n /= 10;
+                c.next = new ListNode(n % 10);
+                c = c.next;
+            } while (n > 0);
+            return lastDigit;
+        }
+
+        int val;
+        ListNode next;
+
+        ListNode(int x) { val = x; }
+
+        public int toInt() {
+            int m = 1;
+            ListNode c = this;
+            int ret = 0;
+            while (c != null) {
+                ret += c.val * m;
+                m *= 10;
+                c = c.next;
+            }
+            return ret;
+        }
+    }
+
     public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
         ListNode lastDigit = null;
         ListNode curr = null;
