@@ -1,103 +1,82 @@
 package kissz;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iv/
+ *
+ * Let's try again with dynamic programming.
+ * The problem looks like weighted jobs scheduling.
  */
 public class BestTimeToBuyAndSellStockIV {
-    static class Params {
-        final int k, begin, end;
-
-        Params(int k, int begin, int end) {
-            this.k = k;
-            this.begin = begin;
-            this.end = end;
-        }
-
-        @Override
-        public int hashCode() {
-            return k << 26 + begin << 13 + end;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            Params params = (Params) obj;
-            return params.k == k && params.begin == begin && params.end == end;
-        }
-    }
-
-    Map<Params, Integer> memo = new HashMap<>();
 
     public int maxProfit(int k, int[] prices) {
-        if (k == 1) {
-            return maxProfitForSlice(prices, 0, prices.length);
-        } else if (k == 2) {
-            return maxProfitTwoTrades(prices, 0, prices.length);
-        } else {
-            return maxProfit(k, prices, 0, prices.length);
-        }
-    }
-
-    public int maxProfit(int k, int[] prices, int beginIndex, int endIndex) {
-        Params params = new Params(k, beginIndex, endIndex);
-        if (memo.containsKey(params)) {
-            return memo.get(params);
-        }
-
-        int ret;
-        if (k < 1) {
-            ret = 0;
-        } else if (k == 1) {
-            ret = maxProfitForSlice(prices, beginIndex, endIndex);
-        } else if (k == 2) {
-            ret = maxProfitTwoTrades(prices, beginIndex, endIndex);
-        } else {
-            int k2, k3;
-            if (k % 2 == 0) {
-                k3 = k2 = k / 2;
-            } else {
-                k2 = k / 2 + 1;
-                k3 = k / 2;
+        if (prices.length < 2) return 0;
+        // Don't include non-increasing prices.
+        int[] filtered = new int[prices.length];
+        filtered[0] = prices[0];
+        int n = 1;
+        for (int i = 1; i < prices.length - 1; i++) {
+            if (!(prices[i - 1] > prices[i] && prices[i] > prices[i + 1])) {
+                filtered[n++] = prices[i];
             }
-            int maxProfit = 0;
-            for (int sliceIndex = beginIndex; sliceIndex < endIndex; sliceIndex++) {
-                int profit = maxProfit(k2, prices, beginIndex, sliceIndex)
-                        + maxProfit(k3, prices, sliceIndex, endIndex);
-                maxProfit = Math.max(maxProfit, profit);
+        }
+        if (n < prices.length && prices[prices.length - 1] > prices[prices.length - 2]) {
+            filtered[n] = prices[prices.length - 1];
+            n++;
+        }
+        prices = filtered;
+
+        // We don't need to calculate more than the maximum possible transactions.
+        k = Math.min(k, prices.length / 2);
+
+        if (n < 2) return 0;
+        int[] memo = new int[prices.length];
+        int[] memoPrev = new int[prices.length];
+        int[] swap;
+
+
+        // Don't iterate twice over the part of memo that is not changing.
+        int stableTransactions = 0;
+        for (int numberOfTransactions = 1; numberOfTransactions <= k; numberOfTransactions++) {
+            System.out.println("number of transactions: " + numberOfTransactions);
+            for (int priceHistoryLength = 2; priceHistoryLength <= n; priceHistoryLength++) {
+                int[] maxAfter = new int[priceHistoryLength];
+                int max = 0;
+                for (int i = priceHistoryLength - 1; i >= 0; i--) {
+                    max = Math.max(max, prices[i]);
+                    maxAfter[i] = max;
+                }
+
+                int maxProfit = memoPrev[priceHistoryLength - 1];
+                for (int lastTransactionStart = stableTransactions; lastTransactionStart < priceHistoryLength - 1; lastTransactionStart++) {
+
+                    int profit = maxProfitForSlice(prices, maxAfter, lastTransactionStart, priceHistoryLength);
+                    if (lastTransactionStart > 0) {
+                        profit += memoPrev[lastTransactionStart - 1];
+                    }
+                    maxProfit = Math.max(maxProfit, profit);
+                }
+                memo[priceHistoryLength - 1] = maxProfit;
             }
-            ret = maxProfit;
+
+            while (memo[stableTransactions] == memoPrev[stableTransactions] && stableTransactions < n - 2)
+                stableTransactions++;
+            if (stableTransactions == n - 1)
+                return memoPrev[n - 1];
+            swap = memo;
+            memo = memoPrev;
+            memoPrev = swap;
         }
 
-        memo.put(params, ret);
-        return ret;
+        return memoPrev[n - 1];
     }
 
-    public int maxProfitTwoTrades(int[] prices, int beginIndex, int endIndex) {
-        int maxProfit = 0;
-        for (int sliceIndex = beginIndex; sliceIndex < endIndex; sliceIndex++) {
-            int profit = maxProfitForSlice(prices, beginIndex, sliceIndex)
-                    + maxProfitForSlice(prices, sliceIndex, endIndex);
-            maxProfit = Math.max(maxProfit, profit);
-        }
-        return maxProfit;
-    }
-
-    public int maxProfitForSlice(int[] prices, int beginIndex, int endIndex) {
+    public int maxProfitForSlice(int[] prices, int[] maxAfter, int beginIndex, int endIndex) {
         int n = endIndex - beginIndex;
         if (n < 2) return 0;
 
-        int[] maxAfter = new int[n];
-        int max = 0;
-        for (int i = n - 1; i >= 0; i--) {
-            max = Math.max(max, prices[beginIndex + i]);
-            maxAfter[i] = max;
-        }
-
         int maxDifference = Integer.MIN_VALUE;
         for (int i = 0; i < n; i++) {
-            int difference = maxAfter[i] - prices[beginIndex + i];
+            int difference = maxAfter[beginIndex + i] - prices[beginIndex + i];
             if (difference > maxDifference) {
                 maxDifference = difference;
             }
