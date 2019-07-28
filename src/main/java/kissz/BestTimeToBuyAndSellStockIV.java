@@ -1,5 +1,8 @@
 package kissz;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iv/
  *
@@ -26,48 +29,33 @@ public class BestTimeToBuyAndSellStockIV {
         prices = filtered;
 
         // We don't need to calculate more than the maximum possible transactions.
-        k = Math.min(k, prices.length / 2);
+        k = Math.min(k, n / 2);
 
         if (n < 2) return 0;
         int[] memo = new int[prices.length];
         int[] memoPrev = new int[prices.length];
         int[] swap;
 
-        int[][] maxAfterCache = getMaxAfterArrays(n, prices);
-        int[][] profitSlice = new int[n][n];
-        for (int beginIndex = 0; beginIndex < n; beginIndex++) {
-            if (beginIndex % 100 == 0) {
-                System.out.println(beginIndex);
-            }
-            for (int endIndex = beginIndex + 1; endIndex < n; endIndex++) {
-                int[] maxAfter = maxAfterCache[endIndex];
-                int count = endIndex + 1 - beginIndex;
-                if (count < 2) return 0;
-                int maxDifference = Integer.MIN_VALUE;
-                for (int i = 0; i < count; i++) {
-                    int difference = maxAfter[beginIndex + i] - prices[beginIndex + i];
-                    if (difference > maxDifference) {
-                        maxDifference = difference;
-                    }
-                }
-                profitSlice[beginIndex][endIndex] = maxDifference;
-            }
+        List<List<IntPair>> profitAndTradeLengths = new ArrayList<>(n);
+        for (int i = 0; i < n; i++) {
+            profitAndTradeLengths.add(getProfitAndTradeRunLengths(i, prices));
         }
 
         // Don't iterate twice over the part of memo that is not changing.
         int stableTransactions = 0;
         for (int numberOfTransactions = 1; numberOfTransactions <= k; numberOfTransactions++) {
-            System.out.println(numberOfTransactions);
             for (int priceHistoryLength = 2; priceHistoryLength <= n; priceHistoryLength++) {
 
-                int maxProfit = memoPrev[priceHistoryLength - 1];
-                for (int lastTransactionStart = stableTransactions; lastTransactionStart < priceHistoryLength - 1; lastTransactionStart++) {
-                    int profit = profitSlice[lastTransactionStart][priceHistoryLength - 1];
-                    if (lastTransactionStart > 0) {
-                        profit += memoPrev[lastTransactionStart - 1];
-                    }
-                    maxProfit = Math.max(maxProfit, profit);
+                int maxProfit = Math.max(memoPrev[priceHistoryLength - 1], memo[priceHistoryLength - 2]);
+                List<IntPair> trades = profitAndTradeLengths.get(priceHistoryLength - 1);
+
+                for (int i = 0, size = trades.size(); i < size; i++) {
+                    IntPair trade = trades.get(i);
+                    int profit = memoPrev[trade.b] + trade.a;
+                    if (profit > maxProfit) maxProfit = profit;
+                    if (trade.b < stableTransactions) break;
                 }
+
                 memo[priceHistoryLength - 1] = maxProfit;
             }
 
@@ -83,34 +71,35 @@ public class BestTimeToBuyAndSellStockIV {
         return memoPrev[n - 1];
     }
 
-    public int maxProfitForSlice(int[] prices, int[] maxAfter, int beginIndex, int endIndex) {
-        int n = endIndex - beginIndex;
-        if (n < 2) return 0;
-        int maxDifference = Integer.MIN_VALUE;
-        for (int i = 0; i < n; i++) {
-            int difference = maxAfter[beginIndex + i] - prices[beginIndex + i];
-            if (difference > maxDifference) {
-                maxDifference = difference;
-            }
-        }
-        return maxDifference;
-    }
+    /**
+     * Returns the profit of trades that are closed (sold) on the day. Longer running trades have higher profits or
+     * they are not included. Only the highest profit for each length is included.
+     */
+    List<IntPair> getProfitAndTradeRunLengths(int position, int[] prices) {
+        List<IntPair> ret = new ArrayList<>();
 
-    private int[][] getMaxAfterArrays(int n, int[] values) {
-        int[][] ret = new int[n][];
-        for (int i = 0; i < n; i++) {
-            ret[i] = getMaxAfter(i + 1, values);
+        int maxProfitSoFar = 0;
+        for (int i = position - 1; i >= 0; i--) {
+            int profit = prices[position] - prices[i];
+            if (profit > maxProfitSoFar) {
+                maxProfitSoFar = profit;
+                ret.add(IntPair.of(profit, i));
+            }
         }
         return ret;
     }
 
-    private int[] getMaxAfter(int n, int[] values) {
-        int[] maxAfter = new int[n];
-        int max = 0;
-        for (int i = n - 1; i >= 0; i--) {
-            max = Math.max(max, values[i]);
-            maxAfter[i] = max;
+    public static final class IntPair {
+        final int a;
+        final int b;
+
+        public static IntPair of(int a, int b) {
+            return new IntPair(a, b);
         }
-        return maxAfter;
+
+        public IntPair(int a, int b) {
+            this.a = a;
+            this.b = b;
+        }
     }
 }

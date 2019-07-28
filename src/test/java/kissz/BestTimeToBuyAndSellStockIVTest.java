@@ -44,7 +44,7 @@ public class BestTimeToBuyAndSellStockIVTest {
     @Test
     public void veryVerySlowTestCase() {
         int[] prices = veryVeryBigArray;
-        assertEquals(1000000000, underTest.maxProfit(1000000000, veryVeryBigArray));
+        assertEquals(1648961, underTest.maxProfit(1000000000, veryVeryBigArray));
     }
 
     @Test
