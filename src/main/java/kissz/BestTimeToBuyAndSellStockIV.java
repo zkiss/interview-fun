@@ -33,23 +33,36 @@ public class BestTimeToBuyAndSellStockIV {
         int[] memoPrev = new int[prices.length];
         int[] swap;
 
+        int[][] maxAfterCache = getMaxAfterArrays(n, prices);
+        int[][] profitSlice = new int[n][n];
+        for (int beginIndex = 0; beginIndex < n; beginIndex++) {
+            if (beginIndex % 100 == 0) {
+                System.out.println(beginIndex);
+            }
+            for (int endIndex = beginIndex + 1; endIndex < n; endIndex++) {
+                int[] maxAfter = maxAfterCache[endIndex];
+                int count = endIndex + 1 - beginIndex;
+                if (count < 2) return 0;
+                int maxDifference = Integer.MIN_VALUE;
+                for (int i = 0; i < count; i++) {
+                    int difference = maxAfter[beginIndex + i] - prices[beginIndex + i];
+                    if (difference > maxDifference) {
+                        maxDifference = difference;
+                    }
+                }
+                profitSlice[beginIndex][endIndex] = maxDifference;
+            }
+        }
 
         // Don't iterate twice over the part of memo that is not changing.
         int stableTransactions = 0;
         for (int numberOfTransactions = 1; numberOfTransactions <= k; numberOfTransactions++) {
-            System.out.println("number of transactions: " + numberOfTransactions);
+            System.out.println(numberOfTransactions);
             for (int priceHistoryLength = 2; priceHistoryLength <= n; priceHistoryLength++) {
-                int[] maxAfter = new int[priceHistoryLength];
-                int max = 0;
-                for (int i = priceHistoryLength - 1; i >= 0; i--) {
-                    max = Math.max(max, prices[i]);
-                    maxAfter[i] = max;
-                }
 
                 int maxProfit = memoPrev[priceHistoryLength - 1];
                 for (int lastTransactionStart = stableTransactions; lastTransactionStart < priceHistoryLength - 1; lastTransactionStart++) {
-
-                    int profit = maxProfitForSlice(prices, maxAfter, lastTransactionStart, priceHistoryLength);
+                    int profit = profitSlice[lastTransactionStart][priceHistoryLength - 1];
                     if (lastTransactionStart > 0) {
                         profit += memoPrev[lastTransactionStart - 1];
                     }
@@ -73,7 +86,6 @@ public class BestTimeToBuyAndSellStockIV {
     public int maxProfitForSlice(int[] prices, int[] maxAfter, int beginIndex, int endIndex) {
         int n = endIndex - beginIndex;
         if (n < 2) return 0;
-
         int maxDifference = Integer.MIN_VALUE;
         for (int i = 0; i < n; i++) {
             int difference = maxAfter[beginIndex + i] - prices[beginIndex + i];
@@ -82,5 +94,23 @@ public class BestTimeToBuyAndSellStockIV {
             }
         }
         return maxDifference;
+    }
+
+    private int[][] getMaxAfterArrays(int n, int[] values) {
+        int[][] ret = new int[n][];
+        for (int i = 0; i < n; i++) {
+            ret[i] = getMaxAfter(i + 1, values);
+        }
+        return ret;
+    }
+
+    private int[] getMaxAfter(int n, int[] values) {
+        int[] maxAfter = new int[n];
+        int max = 0;
+        for (int i = n - 1; i >= 0; i--) {
+            max = Math.max(max, values[i]);
+            maxAfter[i] = max;
+        }
+        return maxAfter;
     }
 }
